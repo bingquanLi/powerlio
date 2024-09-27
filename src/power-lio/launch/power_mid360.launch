@@ -1,0 +1,42 @@
+<launch>
+<!-- Launch file for Livox mid360 LiDAR -->
+
+	<arg name="rviz" default="false" />
+
+	<node pkg="power_lio" type="powerlio_mapping" name="laserMapping" output="screen" > 
+	<rosparam command="load" file="$(find power_lio)/config/mid360.yaml" />
+	<param name="use_imu_as_input" type="bool" value="0"/> <!--change to 1 to use IMU as input of Point-LIO-->
+	<param name="prop_at_freq_of_imu" type="bool" value="1"/>
+	<param name="check_satu" type="bool" value="1"/>
+	<param name="init_map_size" type="int" value="10"/>
+	<param name="point_filter_num" type="int" value="1"/> <!--4, 3--> 
+	<param name="space_down_sample" type="bool" value="1" />  
+	<param name="filter_size_surf" type="double" value="0.5" /> <!--0.5, 0.3, 0.2, 0.15, 0.1--> 
+	<param name="filter_size_map" type="double" value="0.4" /> <!--0.5, 0.3, 0.15, 0.1-->
+	<param name="ivox_nearby_type" type="int" value="6" /> <!--0.5, 0.3, 0.15, 0.1-->
+	<param name="runtime_pos_log_enable" type="bool" value="0" /> <!--1-->
+	</node>
+	<!-- <param name="odom_tf" type="bool" value="$(arg odom_tf)" />  -->
+	<group if="$(arg rviz)">
+	<node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz" args="-d $(find point_lio)/rviz_cfg/loam_livox.rviz" />
+	</group>
+
+	<!-- <node unless="$(arg odom_tf)" pkg="tf2_ros" type="static_transform_publisher" name="odom_tf_publisher" args="0.0 0.0 0.0 0.0 0.0 0.0 world odom" /> -->
+    
+	<!-- Launch mid360 -->
+    <include file="$(find livox_ros_driver2)/launch_ROS1/MID360_my.launch">
+    </include>
+
+	<!--CustomMsg to pointcloud2-->
+	 <node pkg="livox_repub" type="livox_repub_online_node" name="livox_repub_online_node" output="screen" >
+		<param name="livox_raw_message_name"    type="string"   value="/livox/lidar" />
+		<param name="livox_points_message_name"    type="string"   value="/livox/points" />
+	</node>
+	
+	<!--
+	<node pkg="my_pcl" type="pcl_write" name="pcl_write" output="screen" >
+	</node> -->
+	
+	launch-prefix="valgrind" 
+
+</launch>

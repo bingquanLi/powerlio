@@ -1,0 +1,24 @@
+<launch>
+    <rosparam command="load" file="$(find my_pcl)/config/point_topic.yaml"/>
+    <!-- Launch D435i -->
+    <include file="$(find realsense2_camera)/launch/back_cam.launch">
+    </include>
+        <include file="$(find realsense2_camera)/launch/front_cam.launch">
+    </include>
+
+    <!-- Launch mid360 -->
+    <include file="$(find livox_ros_driver2)/launch_ROS1/MID360_my.launch">
+    </include>
+
+    <!--CustomMsg to pointcloud2-->
+	 <node pkg="livox_repub" type="livox_repub_online_node" name="livox_repub_online_node" output="screen" >
+		<param name="livox_raw_message_name"    type="string"   value="/livox/lidar" />
+		<param name="livox_points_message_name"    type="string"   value="/livox/points" />
+	</node>
+
+    <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="base_to_back_cam_link" args="0.434 0.01 0.05 0 0.785 0 base back_cam_link" />  -->
+    <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="back_cam_link_to_lidar" args="0.0846 -0.015 -0.0725 1.478 0 1.5708 back_cam_link lidar" /> -->
+
+    <node pkg="my_pcl" type="pcl_write" name="pcl_write" output="screen" >
+    </node>
+</launch>
