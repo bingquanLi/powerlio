@@ -1,7 +1,0 @@
-front_cam_input: "/front_cam/depth/color/points"
-front_cam_output: "/front_cam_point_my"
-
-back_cam_input: "/back_cam/depth/color/points"
-back_cam_output: "/back_cam_point_my"
-
-
